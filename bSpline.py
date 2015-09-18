@@ -1,4 +1,5 @@
 import scipy
+import scipy.linalg
 import numpy
 import matplotlib.pyplot as plt
 class BSpline(object):
@@ -11,8 +12,9 @@ class BSpline(object):
 
     def findHotInterval(self, t):
         return (self.grid > t).argmax()-1
-
-    def basisFunction(u, k, j):
+    
+    @classmethod
+    def basisFunction(cls, u, k, j):
         if k == 0:
             return lambda x: ((x>=u[j-1])-(x>=u[j]))
         else: 
@@ -41,3 +43,15 @@ class BSpline(object):
             xy[:,j] = self.findS(i, t)
         plt.plot(xy[0,:],xy[1,:])
         plt.show()
+    
+    @classmethod	
+    def interpolation(cls, grid, xy):
+	# Skapa xchi
+        xi  = [(grid[:-2]+grid[1:-1]+grid[2:])/3]
+	L = numpy.size(xi)
+        # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?
+	N = numpy.array([[basisFunction(xi[i], 3, j) for i in range(0,L)] for j in range(0,L)]).T
+	# skapa ekvationssystemet 	
+        dx = scipy.linalg.solve(N, xy[0,:])  #detta bör bytas mot solve_banded när vi fattar hur saker funkar. 	
+        dy = scipy.linalg.solve(N, xy[1,:])  #detta också.
+	d = array([dx,dy])
