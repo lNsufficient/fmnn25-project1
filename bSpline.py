@@ -7,7 +7,7 @@ class BSpline(object):
         self.d = dvalues #these are the corresponding d values, so that dvalues[i] = d_i, 
 
     def __call__(self):
-        return d	
+        self.plot()
 
     def findHotInterval(self, t):
         return (self.grid > t).argmax()-1
