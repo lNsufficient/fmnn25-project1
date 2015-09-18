@@ -31,13 +31,20 @@ class BSpline(object):
         return (self.alpha(i_l, i_r, t)*d1 + (1-self.alpha(i_l, i_r, t))*d2)
 
     def alpha(self, i_l, i_r, t):
+        #print(i_r)
+        #print(i_l)
         return (self.grid[i_r] - t)/(self.grid[i_r] - self.grid[i_l])
 
     def plot(self):
         points = 1000
-        xy = numpy.zeros((2, points))
-        for j, t in enumerate(numpy.linspace(self.grid[0], self.grid[-1],points)):
+        xy = numpy.zeros((2, points-1))
+        for j, t in enumerate(numpy.linspace(self.grid[0], self.grid[-1],points)[0:-1]):
             i = self.findHotInterval(t)
+            print(i)
             xy[:,j] = self.findS(i, t)
+            print(j)
+        print(points-1)
+        print(xy)
         plt.plot(xy[0,:],xy[1,:])
+        plt.plot(self.d[0,:],self.d[1,:])
         plt.show()
