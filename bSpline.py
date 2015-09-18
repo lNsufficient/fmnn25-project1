@@ -1,12 +1,13 @@
 import scipy
 import numpy
+import matplotlib.pyplot as plt
 class BSpline(object):
     def __init__(self,grid,dvalues):
         self.grid = grid #these are the u values, such that grid[i] = u_i
-        self.dvalues = dvalues #these are the corresponding d values, so that dvalues[i] = d_i, 
+        self.d = dvalues #these are the corresponding d values, so that dvalues[i] = d_i, 
 
     def __call__(self):
-        return dvalues	
+        return d	
 
     def findHotInterval(self, t):
         return (self.grid > t).argmax()-1
@@ -19,25 +20,24 @@ class BSpline(object):
 
     def findS(self, i, t):
         #intressanta d: dvalues[i-2:i+1]
-        second1 = theD(d[i-2],d[i-1], i-2, i+1, t)
-        second2 = theD(d[i-1],d[i], i-1, i+2, t)
-        second3 = theD(d[i], d[i+1], i, i+3, t)
-        last1 = theD(second1, second2, i-1, i+1, t)
-        last2 = theD(second2, second3, i, i+2, t)
-        return theD(last1, last2, i, i +1, t)	
+        second1 = self.theD(self.d[:,i-2],self.d[:,i-1], i-2, i+1, t)
+        second2 = self.theD(self.d[:,i-1],self.d[:,i], i-1, i+2, t)
+        second3 = self.theD(self.d[:,i], self.d[:,i+1], i, i+3, t)
+        last1 = self.theD(second1, second2, i-1, i+1, t)
+        last2 = self.theD(second2, second3, i, i+2, t)
+        return self.theD(last1, last2, i, i +1, t)	
 
     def theD(self, d1, d2, i_l, i_r, t):
-        return (alpha(i_l, i_r, t)*d1 + (1-alpha(i_l, i_r, t))*d2)
+        return (self.alpha(i_l, i_r, t)*d1 + (1-self.alpha(i_l, i_r, t))*d2)
 
     def alpha(self, i_l, i_r, t):
         return (self.grid[i_r] - t)/(self.grid[i_r] - self.grid[i_l])
 
     def plot(self):
         points = 1000
-        xy = scipy.zeros(2, points)
-        for j, t in enumerate(linspace(grid[0], grid[-1],points)):
-            i = findHotInterval(t)
-            xy[:,j] = findS(i, t)
-        plot(x, y)
-
-
+        xy = numpy.zeros((2, points))
+        for j, t in enumerate(numpy.linspace(self.grid[0], self.grid[-1],points)):
+            i = self.findHotInterval(t)
+            xy[:,j] = self.findS(i, t)
+        plt.plot(xy[0,:],xy[1,:])
+        plt.show()
