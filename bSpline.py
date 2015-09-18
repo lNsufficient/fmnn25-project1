@@ -18,7 +18,7 @@ class BSpline(object):
         if k == 0:
             return lambda x: ((x>=u[j-1])-(x>=u[j]))
         else: 
-            return lambda x: (x-u[j-1])/(u[j+k-1] - u[j-1])*basisFunction(u, k-1, j)(x) + (u[j+k] - x)/(u[i+k]-u[i])*basisFunction(u, k-1, j+1)(x)
+            return lambda x: (x-u[j-1])/(u[j+k-1] - u[j-1])*BSpline.basisFunction(u, k-1, j)(x) + (u[j+k] - x)/(u[j+k]-u[j])*BSpline.basisFunction(u, k-1, j+1)(x)
 
     def findS(self, i, t):
         #intressanta d: dvalues[i-2:i+1]
@@ -35,6 +35,12 @@ class BSpline(object):
     def alpha(self, i_l, i_r, t):
         #print(i_r)
         #print(i_l)
+        if (self.grid[i_r] == self.grid[i_l]):
+            if ((self.grid[i_r] - t) == 0):
+                return 0
+            else:
+                #serious problems
+                pass
         return (self.grid[i_r] - t)/(self.grid[i_r] - self.grid[i_l])
 
     def plot(self):
@@ -57,7 +63,8 @@ class BSpline(object):
         xi  = [(grid[:-2]+grid[1:-1]+grid[2:])/3]
         L = numpy.size(xi)
         # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?
-        N = numpy.array([[basisFunction(xi[i], 3, j) for i in range(0,L)] for j in range(0,L)]).T
+        print(BSpline.basisFunction(grid, 3, 2)(xi[1])) 
+        N = numpy.array([[BSpline.basisFunction(grid, 3, j)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
 	# skapa ekvationssystemet 	
         dx = scipy.linalg.solve(N, xy[0,:])  #detta bör bytas mot solve_banded när vi fattar hur saker funkar. 	
         dy = scipy.linalg.solve(N, xy[1,:])  #detta också.
