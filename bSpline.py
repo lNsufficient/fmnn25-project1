@@ -20,7 +20,7 @@ class BSpline(object):
             return lambda x: (x>=u[j-1] and x<u[j])
         else: 
             #return lambda x: cls.alpha(u, u[(j+k-1)%L], u[(j-1)%L])(x)*BSpline.basisFunction(u, (k-1), j%L)(x) + cls.alpha(u, u[j%L], u[(j+k)%L])(x)*BSpline.basisFunction(u, k-1, (j+1)%L)(x)
-            return lambda x: cls.alpha(u, u[(j+k-1)], u[(j-1)])(x)*BSpline.basisFunction(u, (k-1), j)(x) + cls.alpha(u, u[j], u[(j+k)])(x)*BSpline.basisFunction(u, k-1, (j+1))(x)
+            return lambda x: cls.alpha(u, (j+k-1), (j-1))(x)*BSpline.basisFunction(u, (k-1), j)(x) + cls.alpha(u, j, (j+k))(x)*BSpline.basisFunction(u, k-1, (j+1))(x)
             
             #return lambda x: (x-u[j-1])/(u[j+k-1] - u[j-1])*cls.basisFunction(u,k-1,j)(x) + (u[j+k]-x)/(u[j+k]-u[j])*cls.basisFunction(u,k-1,j+1)(x)
 
@@ -59,22 +59,26 @@ class BSpline(object):
             xy[:,j] = self.findS(i, t)
         plt.plot(xy[0,:],xy[1,:])
         plt.plot(self.d[0,:],self.d[1,:])
+        plt.scatter(self.d[0,:],self.d[1,:])
+
         plt.show()
     
     @classmethod
     def interpolation(cls, grid, xy):
         # Skapa xi
         tmpgrid = grid
-        grid = grid[1:-1]
+        grid = grid[:-5]
         xi  = numpy.array((grid[:-2]+grid[1:-1]+grid[2:])/3)
         grid = tmpgrid
         L = numpy.size(xi)
+        print(numpy.size(xi))
+        print(numpy.size(grid))
         # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?
         #print(xi)
         #print(xi[1])
         #print(BSpline.basisFunction(grid, 0, 2)(xi[1]))
         #print(BSpline.basisFunction(grid, 3, 2)(xi[0])) 
-        N = numpy.array([[BSpline.basisFunction(grid, 3, j+1)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
+        N = numpy.array([[BSpline.basisFunction(grid, 3, j+1)(xi[i]) for i in range(0,L)] for j in range(0,L)])
         # skapa ekvationssystemet
         print(numpy.size(N))
         print(N)

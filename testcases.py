@@ -17,7 +17,7 @@ class testBSpline(unittest.TestCase):
             self.fail("If nodes coincide 0/0 = 0, but we got division by zero error")
         expected = 0
         self.assertEqual(result, expected)
-    def LooksGood(self):
+    def testLooksGood(self):
 #xtmp = numpy.linspace(0,2*pi,5)
         xtmp = numpy.array([37,73,42,7,3])
         x = numpy.append(xtmp[0],xtmp[0])
@@ -35,10 +35,17 @@ class testBSpline(unittest.TestCase):
         spline = bSpline.BSpline(grid, d)
         spline.plot()
         self.assertTrue(True)
+    def testLooksGood2(self):
+        u = numpy.array([-2, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2])
+        d0 = numpy.array([0,0,0,6,0,0,0])
+        d1 = numpy.array([0,0,0,0,0,0,0])
+        d = numpy.array([d0,d1])
+        spline = bSpline.BSpline(u, d)
+        spline.plot()
     def testInterpolation(self):
         xy = numpy.array([[1, 0, 4, -1],[1, -3, 2, -1]])
         #u = numpy.array([0,0,1, 2, 3, 31])
-        u = numpy.array([0,1,2,3,4,5,6,7])
+        u = numpy.array([0,1,2,3,4,5,6,6,6,0,0])
         xi,dtmp = bSpline.BSpline.interpolation(u, xy)
         d0tmp = dtmp[0]
         d1tmp = dtmp[1]
@@ -56,6 +63,7 @@ class testBSpline(unittest.TestCase):
         grid = numpy.append(grid,grid[-1])
         grid = numpy.append(grid,grid[-1])    
         spline = bSpline.BSpline(grid, numpy.array([d0,d1]))
+        plt.scatter(xy[0,:],xy[1,:],marker="x")
         spline()
         #plt.plot(xy[0,:],xy[1,:])
         #plt.show()
@@ -64,13 +72,12 @@ class testBSpline(unittest.TestCase):
         y = numpy.empty(points)
         xa = numpy.linspace(0,7,points)
         for i,x in enumerate(xa):
-            y[i] = (bSpline.BSpline.basisFunction(numpy.array([0,1,2,3,4,5,6,7,7]),3,3)(x))
+            y[i] = (bSpline.BSpline.basisFunction(numpy.array([1,2,3,4,5,6,7,7,7,1,1]),3,2)(x))
         plt.plot(xa,y)
         plt.show()
         self.assertAlmostEqual(y[numpy.isclose(xa,2,1e-3).argmax()],0, msg="basis function not zero at beginning of its relevant interval")
         self.assertAlmostEqual(y[numpy.isclose(xa,4,1e-4).argmax()],2/3.0,places=4, msg="basis function not correct in the middle of its relevant interval")
         self.assertAlmostEqual(y[numpy.isclose(xa,6,1e-3).argmax()],0, msg="basis function not zero at end of its relevant interval")
-
 
 
 if __name__== '__main__':
