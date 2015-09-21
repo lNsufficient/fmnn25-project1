@@ -16,9 +16,11 @@ class BSpline(object):
     @classmethod
     def basisFunction(cls, u, k, j):
         if k == 0:
+            if (u[j-1] == u[j]): #whatever counts as equal to
+                return lambda x: 0        
             return lambda x: ((x>=u[j-1])-(x>=u[j]))
         else: 
-            return lambda x: (x-u[j-1])/(u[j+k-1] - u[j-1])*BSpline.basisFunction(u, k-1, j)(x) + (u[j+k] - x)/(u[j+k]-u[j])*BSpline.basisFunction(u, k-1, j+1)(x)
+            return lambda x: -alpha(u[j-1], u[j+k-1])*BSpline.basisFunction(u, k-1, j)(x) - alpha(u[j], u[j+k])*BSpline.basisFunction(u, k-1, j+1)(x)
 
     def findS(self, i, t):
         #intressanta d: dvalues[i-2:i+1]
@@ -30,18 +32,18 @@ class BSpline(object):
         return self.theD(last1, last2, i, i +1, t)	
 
     def theD(self, d1, d2, i_l, i_r, t):
-        return (self.alpha(i_l, i_r, t)*d1 + (1-self.alpha(i_l, i_r, t))*d2)
+        return (self.alpha(i_l, i_r)(t)*d1 + (1-self.alpha(i_l, i_r)(t))*d2)
 
-    def alpha(self, i_l, i_r, t):
+    def alpha(self, i_l, i_r):
         #print(i_r)
         #print(i_l)
         if (self.grid[i_r] == self.grid[i_l]):
             if ((self.grid[i_r] - t) == 0):
-                return 0
+                return lambda x: 0
             else:
                 #serious problems
                 pass
-        return (self.grid[i_r] - t)/(self.grid[i_r] - self.grid[i_l])
+        return lambda x: (self.grid[i_r] - x)/(self.grid[i_r] - self.grid[i_l])
 
     def plot(self):
         points = 1000
@@ -59,7 +61,7 @@ class BSpline(object):
     
     @classmethod	
     def interpolation(cls, grid, xy):
-	# Skapa xchi
+	# Skapa xi
         xi  = [(grid[:-2]+grid[1:-1]+grid[2:])/3]
         L = numpy.size(xi)
         # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?

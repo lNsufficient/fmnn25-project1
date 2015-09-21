@@ -11,7 +11,7 @@ class testBSpline(unittest.TestCase):
     def testAlphaDivideByZero(self):
         a = bSpline.BSpline(numpy.array([0,0,0,1,1,1]),numpy.array([[1,1],[1,1],[1,1],[1,1],[1,1],[1,1]]))
         try:
-            result = a.alpha(3,3,1)
+            result = a.alpha(3,3)(1)
         except:
             self.fail("If nodes coincide 0/0 = 0, but we got division by zero error")
         expected = 0
