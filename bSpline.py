@@ -15,12 +15,13 @@ class BSpline(object):
     
     @classmethod
     def basisFunction(cls, u, k, j):
+        L = numpy.size(u) - 1 #If we ever run into problem, the first thing to do is uncomment this line, because it really can mess up things.
         if k == 0:
             if (u[j-1] == u[j]): #whatever counts as equal to
                 return lambda x: 0        
             return lambda x: ((x>=u[j-1])-(x>=u[j]))
         else: 
-            return lambda x: (-1)*cls.alpha(u, u[j-1], u[j+k-1])(x)*BSpline.basisFunction(u, k-1, j)(x) - cls.alpha(u, u[j], u[j+k])(x)*BSpline.basisFunction(u, k-1, j+1)(x)
+            return lambda x: (-1)*cls.alpha(u, u[(j-1)%L], u[(j+k-1)%L])(x)*BSpline.basisFunction(u, (k-1), j%L)(x) - cls.alpha(u, u[j%L], u[(j+k)%L])(x)*BSpline.basisFunction(u, k-1, (j+1)%L)(x)
 
     def findS(self, i, t):
         #intressanta d: dvalues[i-2:i+1]
@@ -75,6 +76,7 @@ class BSpline(object):
         print(BSpline.basisFunction(grid, 3, 2)(xi[0])) 
         N = numpy.array([[BSpline.basisFunction(grid, 3, j)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
 	# skapa ekvationssystemet 	
+        print(N)
         dx = scipy.linalg.solve(N, xy[0,:])  #detta bör bytas mot solve_banded när vi fattar hur saker funkar. 	
         dy = scipy.linalg.solve(N, xy[1,:])  #detta också.
         d = array([dx,dy])
