@@ -20,7 +20,7 @@ class BSpline(object):
                 return lambda x: 0        
             return lambda x: ((x>=u[j-1])-(x>=u[j]))
         else: 
-            return lambda x: -alpha(u[j-1], u[j+k-1])*BSpline.basisFunction(u, k-1, j)(x) - alpha(u[j], u[j+k])*BSpline.basisFunction(u, k-1, j+1)(x)
+            return lambda x: -self.alpha(u[j-1], u[j+k-1])*BSpline.basisFunction(u, k-1, j)(x) - self.alpha(u[j], u[j+k])*BSpline.basisFunction(u, k-1, j+1)(x)
 
     def findS(self, i, t):
         #intressanta d: dvalues[i-2:i+1]
@@ -37,12 +37,15 @@ class BSpline(object):
     def alpha(self, i_l, i_r):
         #print(i_r)
         #print(i_l)
-        if (self.grid[i_r] == self.grid[i_l]):
-            if ((self.grid[i_r] - t) == 0):
-                return lambda x: 0
-            else:
+        #if (self.grid[i_r] == self.grid[i_l]):
+            #if ((self.grid[i_r] - t) == 0):
+                #this case should be taken care of by the self.grid[i_r]!=x inside lambda x: that is returned. 
+            #    pass
+            #else:
                 #serious problems
-                pass
+            #    pass
+        if (self.grid[i_r]==self.grid[i_l]):
+            return lambda x: 0
         return lambda x: (self.grid[i_r] - x)/(self.grid[i_r] - self.grid[i_l])
 
     def plot(self):
