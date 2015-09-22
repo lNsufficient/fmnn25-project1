@@ -99,6 +99,7 @@ class BSpline(object):
         tmpgrid = grid
         #grid = grid[1:-1]
         xi  = numpy.array((grid[:-2]+grid[1:-1]+grid[2:])/3)
+        xi[-1] = xi[-1]-(1e-8)
         grid = tmpgrid
         L = numpy.size(xi)
         # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?

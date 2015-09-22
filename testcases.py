@@ -61,11 +61,11 @@ class testBSpline(unittest.TestCase):
         d1tmp = numpy.insert(d1tmp,[0,0,-1,-1],[d1tmp[0],d1tmp[0],d1tmp[-1],d1tmp[-1]])
         xi = numpy.insert(xi,[0,0,-1,-1],[xi[0],xi[0],xi[-1],xi[-1]])
         spline = bSpline.BSpline(numpy.array([d0tmp,d1tmp]),xi)
-        plt.scatter(xy[0,:],xy[1,:],marker="x")
+        plt.scatter(xy[:,0],xy[:,1],marker="x")
         spline()
         #plt.plot(xy[0,:],xy[1,:])
         #plt.show()
-    def testBasisFunction(self):
+    def BasisFunction(self):
         points = 10000
         y = numpy.empty(points)
         xa = numpy.linspace(0,14,points)
@@ -83,10 +83,25 @@ class testBSpline(unittest.TestCase):
         maxLimit = 10
         plotPoints = 100
         grid = numpy.array(list(range(0,maxLimit)))
-        for i in range(0,maxLimit):
+        grid = numpy.insert(grid,[0,0,-1,-1],[grid[0],grid[0],grid[-1],grid[-1]])
+        for i in range(maxLimit+4):
              for t,x in enumerate(numpy.linspace(0,maxLimit-1,plotPoints)):
                  sum[t] += bSpline.BSpline.basisFunction(grid,i)(x)
         print(sum)
+    def testPlotfBasisFunctions(self):
+        sum = numpy.zeros(100)
+        maxLimit = 10
+        plotPoints = 100
+        grid = numpy.array(list(range(0,maxLimit)))
+        grid = numpy.insert(grid,[0,0,-1,-1],[grid[0],grid[0],grid[-1],grid[-1]])
+        for i in range(maxLimit+4):
+            y = numpy.zeros(plotPoints-1)
+            xa = numpy.linspace(0,maxLimit-1,plotPoints)[:-1]
+            for t,x in enumerate(xa):
+                y[t] = bSpline.BSpline.basisFunction(grid,i)(x)
+            plt.plot(xa,y)
+        plt.show()
+        #print(sum)
 
 
 if __name__== '__main__':
