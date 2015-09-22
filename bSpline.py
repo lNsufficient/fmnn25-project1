@@ -6,7 +6,7 @@ class BSpline(object):
     def __init__(self,dvalues,grid=None):
         #Grid should be same length as dvalues
         if(grid is None):
-            grid = numpy.linspace(0,1,numpy.size(dvalues,1)-2)
+            grid = numpy.linspace(0,1,numpy.size(dvalues,1)-4)
             self.grid = numpy.insert(grid,[0,0,-1,-1],[grid[0],grid[0],grid[-1],grid[-1]])
         else:
             self.grid = grid #these are the u values, such that grid[i] = u_i

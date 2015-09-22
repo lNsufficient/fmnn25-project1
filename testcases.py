@@ -17,6 +17,8 @@ class testBSpline(unittest.TestCase):
             self.fail("If nodes coincide 0/0 = 0, but we got division by zero error")
         expected = 0
         self.assertEqual(result, expected)
+    def testDimensionOfDValues(self):
+        pass
     def LooksGood(self):
 #xtmp = numpy.linspace(0,2*pi,5)
         x = numpy.array([37,73,42,7,3])
@@ -30,6 +32,15 @@ class testBSpline(unittest.TestCase):
         spline = bSpline.BSpline(d,grid)
         spline.plot()
         self.assertTrue(True)
+    def testBasisFunctionEqualS(self):
+        #test if s(u) = N_i for d_i = 1, d_j=0, j!=i for all i.
+        
+        spline = bSpline.BSpline() 
+        numberValues = 12
+        for i in range(gridPoints):
+            spline.d = numpy.zeroes
+        pass
+
     def LooksGood2(self):
         x = numpy.linspace(0,10)
         x = numpy.insert(x,[0,0,-1,-1],[x[0],x[0],x[-1],x[-1]])
