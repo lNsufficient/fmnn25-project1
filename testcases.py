@@ -8,7 +8,7 @@ warnings.filterwarnings('error')
 
 
 class testBSpline(unittest.TestCase):
-    def testAlphaDivideByZero(self):
+    def AlphaDivideByZero(self):
         u = numpy.array([0,0,0,1,1,1])
         a = bSpline.BSpline(numpy.array([[1,1],[1,1],[1,1],[1,1],[1,1],[1,1]]),u)
         try:
@@ -17,7 +17,7 @@ class testBSpline(unittest.TestCase):
             self.fail("If nodes coincide 0/0 = 0, but we got division by zero error")
         expected = 0
         self.assertEqual(result, expected)
-    def testLooksGood(self):
+    def LooksGood(self):
 #xtmp = numpy.linspace(0,2*pi,5)
         x = numpy.array([37,73,42,7,3])
         x = numpy.insert(x,[0,0,-1,-1],[x[0],x[0],x[-1],x[-1]])
@@ -30,7 +30,7 @@ class testBSpline(unittest.TestCase):
         spline = bSpline.BSpline(d,grid)
         spline.plot()
         self.assertTrue(True)
-    def testLooksGood2(self):
+    def LooksGood2(self):
         x = numpy.linspace(0,10)
         x = numpy.insert(x,[0,0,-1,-1],[x[0],x[0],x[-1],x[-1]])
         y = numpy.cos(x)
@@ -51,7 +51,7 @@ class testBSpline(unittest.TestCase):
         d = numpy.array([x,y])
 
         spline = bSpline.BSpline(d)
-        xy = numpy.array([spline.findS(u) for u in spline.grid[2:-2]])
+        xy = numpy.array([spline.findS(u) for u in spline.grid[1:-1]])
         print(numpy.shape(xy))
         print(numpy.shape(spline.grid))
         xi,dtmp = bSpline.BSpline.interpolation(spline.grid, xy)
@@ -68,14 +68,25 @@ class testBSpline(unittest.TestCase):
     def testBasisFunction(self):
         points = 10000
         y = numpy.empty(points)
-        xa = numpy.linspace(0,7,points)
+        xa = numpy.linspace(0,14,points)
         for i,x in enumerate(xa):
-            y[i] = (bSpline.BSpline.basisFunction(numpy.array([1,1,1,2,3,4,5,6,7,7,7]),4)(x))
+            #y[i] = (bSpline.BSpline.basisFunction(numpy.array([1,1,1,2,3,4,5,6,7,7,7]),1)(x))
+            y[i] = (bSpline.BSpline.basisFunction(numpy.array([0,1,2,3,4,5,6,7,8,9,10,11,12]),11)(x))
         plt.plot(xa,y)
         plt.show()
         self.assertAlmostEqual(y[numpy.isclose(xa,2,1e-3).argmax()],0, msg="basis function not zero at beginning of its relevant interval")
         self.assertAlmostEqual(y[numpy.isclose(xa,4,1e-4).argmax()],2/3.0,places=4, msg="basis function not correct in the middle of its relevant interval")
         self.assertAlmostEqual(y[numpy.isclose(xa,6,1e-3).argmax()],0, msg="basis function not zero at end of its relevant interval")
+
+    def testSumofBasisFunctions(self):
+        sum = numpy.zeros(100)
+        maxLimit = 10
+        plotPoints = 100
+        grid = numpy.array(list(range(0,maxLimit)))
+        for i in range(0,maxLimit):
+             for t,x in enumerate(numpy.linspace(0,maxLimit-1,plotPoints)):
+                 sum[t] += bSpline.BSpline.basisFunction(grid,i)(x)
+        print(sum)
 
 
 if __name__== '__main__':

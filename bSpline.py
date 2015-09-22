@@ -23,9 +23,19 @@ class BSpline(object):
         return lambda x: cls.N(u,3,j,x)
     @classmethod
     def N(cls, u, k, j, x):
-        L = numpy.size(u) - 1 #If we ever run into problem, the first thing to do is uncomment this line, because it really can mess up things.
+        L = numpy.size(u) #If we ever run into problem, the first thing to do is uncomment this line, because it really can mess up things.
         if k == 0:
-            return (x>=u[j-1] and x<u[j])
+            j1 = j-1
+            j2 = j
+            if (j1 < 0):
+                j1 = 0
+            if (j1 >= L):
+                j1 = L-1
+            if (j2 < 0):
+                j2 = 0
+            if (j2 >= L):
+                j2 = L-1
+            return (x>=u[j1] and x<u[j2])
         else: 
             #return lambda x: cls.alpha(u, u[(j+k-1)%L], u[(j-1)%L])(x)*BSpline.basisFunction(u, (k-1), j%L)(x) + cls.alpha(u, u[j%L], u[(j+k)%L])(x)*BSpline.basisFunction(u, k-1, (j+1)%L)(x)
             return cls.alpha(u, (j+k-1), (j-1),x)*cls.N(u, (k-1), j, x) + cls.alpha(u, j, (j+k),x)*cls.N(u, k-1, (j+1),x)
@@ -58,8 +68,16 @@ class BSpline(object):
             #else:
                 #serious problems
             #    pass
-        if(i_r >= len(u) or i_l >= len(u)):
-            return 0
+        L = numpy.size(u)
+        if (i_l < 0):
+            i_l = 0
+        if (i_l >= L):
+            i_l = L-1
+
+        if (i_r < 0):
+            i_r = 0
+        if (i_r >= L):
+            i_r = L-1
         if (u[i_r]==u[i_l]):
             return 0
         return (u[i_r] - x)/(u[i_r] - u[i_l])
@@ -88,12 +106,17 @@ class BSpline(object):
         #print(xi[1])
         #print(BSpline.basisFunction(grid, 0, 2)(xi[1]))
         #print(BSpline.basisFunction(grid, 3, 2)(xi[0])) 
-        N = numpy.array([[BSpline.basisFunction(grid, j+1)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
+        print(grid)
+        N = numpy.array([[BSpline.basisFunction(grid, j)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
         # skapa ekvationssystemet
+        f = (BSpline.basisFunction(grid, L))
+        for t in numpy.linspace(0,1):
+                plt.scatter(t, f(t))
+        plt.show()
         print(numpy.shape(N))
         numpy.set_printoptions(precision=3)
         print(N)
-        print(xy)
+        print(xi)
         dx = scipy.linalg.solve(N, xy[:,0])  #detta bör bytas mot solve_banded när vi fattar hur saker funkar. 	
         dy = scipy.linalg.solve(N, xy[:,1])  #detta också.
         d = numpy.array([dx,dy])
