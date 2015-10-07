@@ -1,3 +1,9 @@
+#AUTHORS
+#Alexander Israelsson
+#Edvard Johansson
+#David Petersson
+#Linnéa Støvring-Nielsen
+
 import scipy
 import scipy.linalg
 import numpy
@@ -12,8 +18,9 @@ class BSpline(object):
             self.grid = grid #these are the u values, such that grid[i] = u_i
         self.d = dvalues #these are the corresponding d values, so that dvalues[i] = d_i, 
 
-    def __call__(self):
-        self.plot()
+    def __call__(self, u):
+       # print("bSpline.BSpline.call()" + str(u))
+        return self.findS(u)
 
     def findHotInterval(self, t):
         return (self.grid > t).argmax()-1
@@ -95,30 +102,31 @@ class BSpline(object):
     
     @classmethod
     def interpolation(cls, grid, xy):
-        # Skapa xi
-        tmpgrid = grid
-        #grid = grid[1:-1]
         xi  = numpy.array((grid[:-2]+grid[1:-1]+grid[2:])/3)
         xi[-1] = xi[-1]-(1e-8)
-        grid = tmpgrid
         L = numpy.size(xi)
         # utvärdera splinevärdena på alla xchi (men det kanske inte behövs med alla xchi)?
         #print(xi)
         #print(xi[1])
         #print(BSpline.basisFunction(grid, 0, 2)(xi[1]))
         #print(BSpline.basisFunction(grid, 3, 2)(xi[0])) 
-        print(grid)
+        #print(grid)
         N = numpy.array([[BSpline.basisFunction(grid, j)(xi[i]) for i in range(0,L)] for j in range(0,L)]).T
         # skapa ekvationssystemet
         f = (BSpline.basisFunction(grid, L))
-        for t in numpy.linspace(0,1):
-                plt.scatter(t, f(t))
-        plt.show()
-        print(numpy.shape(N))
+       # for t in numpy.linspace(0,1):
+        #        plt.scatter(t, f(t))
+        #plt.show()
+        #print(numpy.shape(N))
         numpy.set_printoptions(precision=3)
-        print(N)
-        print(xi)
+        #print(N)
+        #print(xi)
+        x = xy[:,0]
+        print("xy shape @interpolation: " + str(numpy.shape(xy)))
+        print("xy @interpolation: " + str(xy))
+        print("N shape @interpolation: " + str(numpy.shape(N)))
+        print("N @interpolation: " + str(N))
         dx = scipy.linalg.solve(N, xy[:,0])  #detta bör bytas mot solve_banded när vi fattar hur saker funkar. 	
         dy = scipy.linalg.solve(N, xy[:,1])  #detta också.
         d = numpy.array([dx,dy])
-        return [xi,d]
+        return (xi,d)
