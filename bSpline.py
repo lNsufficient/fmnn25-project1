@@ -1,4 +1,4 @@
-#AUTHORS
+#AUTHORS:
 #Alexander Israelsson
 #Edvard Johansson
 #David Petersson
@@ -19,7 +19,6 @@ class BSpline(object):
         self.d = dvalues #these are the corresponding d values, so that dvalues[i] = d_i, 
 
     def __call__(self, u):
-       # print("bSpline.BSpline.call()" + str(u))
         return self.findS(u)
 
     def findHotInterval(self, t):
@@ -30,7 +29,7 @@ class BSpline(object):
         return lambda x: cls.N(u,3,j,x)
     @classmethod
     def N(cls, u, k, j, x):
-        L = numpy.size(u) #If we ever run into problem, the first thing to do is uncomment this line, because it really can mess up things.
+        L = numpy.size(u) 
         if k == 0:
             j1 = j-1
             j2 = j
@@ -44,12 +43,8 @@ class BSpline(object):
                 j2 = L-1
             return (x>=u[j1] and x<u[j2])
         else: 
-            #return lambda x: cls.alpha(u, u[(j+k-1)%L], u[(j-1)%L])(x)*BSpline.basisFunction(u, (k-1), j%L)(x) + cls.alpha(u, u[j%L], u[(j+k)%L])(x)*BSpline.basisFunction(u, k-1, (j+1)%L)(x)
             return cls.alpha(u, (j+k-1), (j-1),x)*cls.N(u, (k-1), j, x) + cls.alpha(u, j, (j+k),x)*cls.N(u, k-1, (j+1),x)
             
-            #return lambda x: (x-u[j-1])/(u[j+k-1] - u[j-1])*cls.basisFunction(u,k-1,j)(x) + (u[j+k]-x)/(u[j+k]-u[j])*cls.basisFunction(u,k-1,j+1)(x)
-
-
     def findS(self, t):
         i = self.findHotInterval(t)
         #intressanta d: dvalues[i-2:i+1]
@@ -66,15 +61,6 @@ class BSpline(object):
 
     @classmethod
     def alpha(cls, u, i_l, i_r, x):
-        #print(i_r)
-        #print(i_l)
-        #if (self.grid[i_r] == self.grid[i_l]):
-            #if ((self.grid[i_r] - t) == 0):
-                #this case should be taken care of by the self.grid[i_r]!=x inside lambda x: that is returned. 
-            #    pass
-            #else:
-                #serious problems
-            #    pass
         L = numpy.size(u)
         if (i_l < 0):
             i_l = 0
@@ -101,7 +87,7 @@ class BSpline(object):
         plt.show()
     
     @classmethod
-    def interpolation(cls, grid, xy):
+    def interpolation(cls, grid, xy): #We didn't think this was necessary, and this doesn't work.
         xi  = numpy.array((grid[:-2]+grid[1:-1]+grid[2:])/3)
         xi[-1] = xi[-1]-(1e-8)
         L = numpy.size(xi)

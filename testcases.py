@@ -1,4 +1,4 @@
-#AUTHORS
+#AUTHORS:
 #Alexander Israelsson
 #Edvard Johansson
 #David Petersson
@@ -22,10 +22,8 @@ class testBSpline(unittest.TestCase):
             self.fail("If nodes coincide 0/0 = 0, but we got division by zero error")
         expected = 0
         self.assertEqual(result, expected)
-    def DimensionOfDValues(self):
-        pass
+    
     def testLooksGood(self):
-#xtmp = numpy.linspace(0,2*pi,5)
         x = numpy.array([37,73,42,7,3])
         x = numpy.insert(x,[0,0,-1,-1],[x[0],x[0],x[-1],x[-1]])
         y = numpy.cos(x)
@@ -37,24 +35,11 @@ class testBSpline(unittest.TestCase):
         spline = bSpline.BSpline(d,grid)
         xy = numpy.array([spline(grid[i+1]) for i in range(numpy.size(x)-2)]) 
         spline.plot()
-        print("Shape xy @testLooksGood" + str(numpy.shape(xy))) 
-        (xi, d2) = bSpline.BSpline.interpolation(grid, xy) #grid should be "grid"
-        #xi=numpy.insert(xi,[0,0,-1,-1],[xi[0],xi[0],xi[-1],xi[-1]])
-        #d2[:,0]=numpy.insert(d2[:,0],[0,0,-1,-1],[d2[0,0],d2[0,0],d2[-1,0],d2[-1,0]])
-        #d2[:,1]=numpy.insert(d2[:,1],[0,0,-1,-1],[d2[0,1],d2[0,1],d2[-1,1],d2[-1,1]])
-
-        #print("D2 :"+ str(d2))
-        spline2 = bSpline.BSpline(d2, xi)
-        print("second plot in @testLooksGood")
-        print(d)
-        print(d2)
-        #spline2.plot()
         self.assertTrue(True)
     def testBasisFunctionEqualS(self):
         #test if s(u) = N_i for d_i = 1, d_j=0, j!=i for all i.
         numberValues = 12
         d = numpy.array(list(range(numberValues)))
-        #d = numpy.ones(numberValues)
         d = numpy.random.rand(numberValues, 1)
         umin = 0
         umax = 1
@@ -71,12 +56,9 @@ class testBSpline(unittest.TestCase):
             ytemp = [d[1, i]*bSpline.BSpline.basisFunction(u,i)(j) for j in x]
             ysum+= ytemp
         y2 = ysum
-        ydiff = y[:,0] - y2
-        print("u: " +str(numpy.size(u)))
         plt.plot(x[:], y[:,0])
         plt.plot(x, y2)
         plt.show()
-        print("DIFF: " + str(ydiff))
         for i in range(numpy.size(x)-1):  #Here, we don't compare the last one, basis functions gives 0. 
             self.assertAlmostEqual(y[i,0],y2[i], msg="basis function not equal to blossom thing")
 
@@ -87,7 +69,7 @@ class testBSpline(unittest.TestCase):
         d = numpy.array([x,y])     
         spline = bSpline.BSpline(d)
         spline.plot()
-    def Interpolation(self):
+    def Interpolation(self): # The interpolation does not work corretly
         #xy = numpy.array([[1, 0, 4, -1],[1, -3, 2, -1]])
         
         #u = numpy.array([0,0,1, 2, 3, 31])
@@ -124,7 +106,6 @@ class testBSpline(unittest.TestCase):
         xmin = 0
         xmax = 14
         x = numpy.array(list(range(xmin, xmax+1)))
-        print("x: " + str(x))
         xa = numpy.linspace(xmin,xmax,points)
         sDs = 5 #Significant digits
         testx = xmax - 5
@@ -159,7 +140,6 @@ class testBSpline(unittest.TestCase):
                 y[t] = bSpline.BSpline.basisFunction(grid,i)(x)
             plt.plot(xa,y)
         plt.show()
-        #print(sum)
 
 
 if __name__== '__main__':
